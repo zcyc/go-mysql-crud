@@ -12,6 +12,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// TODO: 需要一个统一返回结果的接口
+
 func GetUserList(w http.ResponseWriter, r *http.Request) {
 	rows, err := db.DB.Query(`SELECT id, name, password, status FROM users`)
 	if err != nil {
@@ -143,7 +145,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 这里要考虑回滚
 	_, err = result.LastInsertId()
 	if err != nil {
 		log.Println("[CreateUser][result.LastInsertId]", err)
