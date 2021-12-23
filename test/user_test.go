@@ -11,7 +11,7 @@ import (
 )
 
 func TestUser(t *testing.T) {
-	t.Run("returns create user result", func(t *testing.T) {
+	t.Run("CreateUser", func(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodGet, "/user", nil)
 		request.Body = ioutil.NopCloser(bytes.NewBufferString(`{"id":"1","name":"1","password":"1","status":1}`))
 		response := httptest.NewRecorder()
@@ -26,7 +26,7 @@ func TestUser(t *testing.T) {
 		}
 	})
 
-	t.Run("returns get user result", func(t *testing.T) {
+	t.Run("GetUser", func(t *testing.T) {
 		vars := map[string]string{
 			"id": "1",
 		}
@@ -45,7 +45,7 @@ func TestUser(t *testing.T) {
 		}
 	})
 
-	t.Run("returns update user result", func(t *testing.T) {
+	t.Run("UpdateUser", func(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodGet, "/user", nil)
 		request.Body = ioutil.NopCloser(bytes.NewBufferString(`{"id":"1","name":"1","password":"1","status":2}`))
 		response := httptest.NewRecorder()
@@ -60,7 +60,7 @@ func TestUser(t *testing.T) {
 		}
 	})
 
-	t.Run("returns delete user result", func(t *testing.T) {
+	t.Run("DeleteUser", func(t *testing.T) {
 		vars := map[string]string{
 			"id": "1",
 		}
