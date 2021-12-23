@@ -3,12 +3,11 @@ package test
 import (
 	"bytes"
 	"github.com/gorilla/mux"
+	"go-example/service"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"go-example/dao"
 )
 
 func TestUser(t *testing.T) {
@@ -17,7 +16,7 @@ func TestUser(t *testing.T) {
 		request.Body = ioutil.NopCloser(bytes.NewBufferString(`{"id":"1","name":"1","password":"1","status":1}`))
 		response := httptest.NewRecorder()
 
-		dao.CreateUser(response, request)
+		service.CreateUser(response, request)
 
 		got := response.Body.String()
 		want := `Create user success!`
@@ -36,7 +35,7 @@ func TestUser(t *testing.T) {
 
 		response := httptest.NewRecorder()
 
-		dao.GetUser(response, request)
+		service.GetUser(response, request)
 
 		got := response.Body.String()
 		want := `{"id":"1","name":"1","password":"1","status":1}`
@@ -51,7 +50,7 @@ func TestUser(t *testing.T) {
 		request.Body = ioutil.NopCloser(bytes.NewBufferString(`{"id":"1","name":"1","password":"1","status":2}`))
 		response := httptest.NewRecorder()
 
-		dao.UpdateUser(response, request)
+		service.UpdateUser(response, request)
 
 		got := response.Body.String()
 		want := `Update user success!`
@@ -70,7 +69,7 @@ func TestUser(t *testing.T) {
 
 		response := httptest.NewRecorder()
 
-		dao.DeleteUser(response, request)
+		service.DeleteUser(response, request)
 
 		got := response.Body.String()
 		want := `Delete user success!`

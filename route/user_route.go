@@ -2,13 +2,13 @@ package route
 
 import (
 	"github.com/gorilla/mux"
-	"go-example/dao"
+	"go-example/service"
 )
 
 func AddUserHandler(r *mux.Router) {
-	r.HandleFunc("/user/list", dao.GetUserList).Methods("GET")
-	r.HandleFunc("/user/{id}", dao.GetUser).Methods("GET")
-	r.HandleFunc("/user", dao.CreateUser).Methods("POST")
-	r.HandleFunc("/user", dao.UpdateUser).Methods("PUT")
-	r.HandleFunc("/user/{id}", dao.DeleteUser).Methods("DELETE")
+	r.HandleFunc("/user/list", service.GetUserList).Methods("GET")
+	r.HandleFunc("/user/{id}", service.GetUser).Methods("GET")
+	r.HandleFunc("/user", service.CreateUser).Methods("POST")
+	r.HandleFunc("/user", service.UpdateUser).Methods("PUT")
+	r.HandleFunc("/user/{id}", service.DeleteUser).Methods("DELETE")
 }
