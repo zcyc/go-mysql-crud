@@ -7,6 +7,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// DB 要换成数据库连接池
 var DB *sql.DB
 
 func init() {
@@ -15,4 +16,5 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println("[DB][init] success")
 }

@@ -10,7 +10,7 @@ import (
 
 func main() {
 	r := mux.NewRouter()
-	route.AddUserHandler(r)
+	route.AddHandler(r)
 	err := http.ListenAndServe(":80", r)
 	if err != nil {
 		log.Fatal(err)
