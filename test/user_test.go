@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"go-example/dao"
@@ -39,8 +38,7 @@ func TestUser(t *testing.T) {
 
 		dao.GetUser(response, request)
 
-		got := response.Body.String()            // 这个最后有个 \n
-		got = strings.Replace(got, "\n", "", -1) // 去掉最后的 \n
+		got := response.Body.String()
 		want := `{"id":"1","name":"1","password":"1","status":1}`
 
 		if got != want {

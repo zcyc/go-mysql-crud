@@ -46,11 +46,26 @@ func GetUserList(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	err = json.NewEncoder(w).Encode(users)
+	usersJson, err := json.Marshal(users)
 	if err != nil {
-		log.Println("[GetUserList][Encode(users)]", err)
+		log.Println("[GetUserList][json.Marshal]", err)
+		_, err := io.WriteString(w, "Get user list failed!")
+		if err != nil {
+			log.Println("[GetUserList][json.Marshal][io.WriteString]", err)
+			return
+		}
 		return
 	}
+	if _, err := w.Write(usersJson); err != nil {
+		log.Println("[GetUserList][json.Marshal][w.Write]", err)
+		return
+	}
+	//json.NewEncoder(w) 会多一个空行，所以换用 w.Write
+	//err = json.NewEncoder(w).Encode(users)
+	//if err != nil {
+	//	log.Println("[GetUserList][Encode(users)]", err)
+	//	return
+	//}
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
@@ -68,18 +83,33 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	query := "SELECT id, name, password, status FROM users WHERE id = ?"
 	if err := db.DB.QueryRow(query, id).Scan(&id, &name, &password, &status); err != nil {
+		log.Println("[GetUser][DB.QueryRow]", err)
 		if _, err := io.WriteString(w, "User not found"); err != nil {
 			log.Println("[GetUser][w.Write]", err)
 			return
 		}
-		log.Println("[GetUser][DB.QueryRow]", err)
 		return
 	}
-
-	if err := json.NewEncoder(w).Encode(model.User{ID: id, Name: name, Password: password, Status: status}); err != nil {
-		log.Println("[GetUser][Encode(User)]", err)
+	user, err := json.Marshal(model.User{ID: id, Name: name, Password: password, Status: status})
+	if err != nil {
+		log.Println("[GetUser][json.Marshal]", err)
+		_, err := io.WriteString(w, "Get user failed!")
+		if err != nil {
+			log.Println("[GetUser][json.Marshal][io.WriteString]", err)
+			return
+		}
 		return
 	}
+	// 返回查询结果
+	if _, err := w.Write(user); err != nil {
+		log.Println("[GetUser][json.Marshal][w.Write]", err)
+		return
+	}
+	//json.NewEncoder(w) 会多一个空行，所以换用 w.Write
+	//if err := json.NewEncoder(w).Encode(model.User{ID: id, Name: name, Password: password, Status: status}); err != nil {
+	//	log.Println("[GetUser][Encode(User)]", err)
+	//	return
+	//}
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -90,11 +120,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("[CreateUser][Request]", user)
 	if user.Name == "" || user.Password == "" {
+		log.Printf("[CreateUser] Name:{%s} Password:{%s} 最少有一个是空的", user.Name, user.Password)
 		if _, err := io.WriteString(w, "Name/Password is empty"); err != nil {
 			log.Printf("[CreateUser][io.WriteString] Name:{%s} Password:{%s} 最少有一个是空的", user.Name, user.Password)
 			return
 		}
-		log.Printf("[CreateUser] Name:{%s} Password:{%s} 最少有一个是空的", user.Name, user.Password)
 		return
 	}
 	var result sql.Result
@@ -105,11 +135,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		result, err = db.DB.Exec(`INSERT INTO users (name, password, status) VALUES (?, ?, ?)`, user.Name, user.Password, user.Status)
 	}
 	if err != nil {
+		log.Println("[CreateUser][DB.Exec]", err)
 		if _, err := io.WriteString(w, user.Name+" already exists"); err != nil {
 			log.Println("[CreateUser][DB.Exec][w.Write]", err)
 			return
 		}
-		log.Println("[CreateUser][DB.Exec]", err)
 		return
 	}
 
@@ -133,21 +163,21 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("[UpdateUser][Request]", user)
 	if user.ID == "" || user.Name == "" || user.Password == "" {
+		log.Printf("[UpdateUser] ID:{%s} Name:{%s} Password:{%s} 最少有一个是空的", user.ID, user.Name, user.Password)
 		if _, err := io.WriteString(w, "ID/Name/Password is empty"); err != nil {
 			log.Printf("[UpdateUser][io.WriteString] ID:{%s} Name:{%s} Password:{%s} 最少有一个是空的", user.ID, user.Name, user.Password)
 			return
 		}
-		log.Printf("[UpdateUser] ID:{%s} Name:{%s} Password:{%s} 最少有一个是空的", user.ID, user.Name, user.Password)
 		return
 	}
 
 	result, err := db.DB.Exec(`UPDATE users set name = ?, password =?, status=? where id=?`, user.Name, user.Password, user.Status, user.ID)
 	if err != nil {
+		log.Println("[UpdateUser][DB.Exec]", err)
 		if _, err := io.WriteString(w, user.Name+" update failed"); err != nil {
 			log.Println("[UpdateUser][DB.Exec][w.Write]", err)
 			return
 		}
-		log.Println("[UpdateUser][DB.Exec]", err)
 		return
 	}
 
@@ -169,11 +199,11 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	log.Println("[DeleteUser][id]", id)
 	result, err := db.DB.Exec(`DELETE FROM users WHERE id = ?`, id)
 	if err != nil {
+		log.Println("[DeleteUser][DB.Exec]", err)
 		if _, err := io.WriteString(w, "delete failed"+id); err != nil {
 			log.Println("[DeleteUser][DB.Exec][w.Write]", err)
 			return
 		}
-		log.Println("[DeleteUser][DB.Exec]", err)
 		return
 	}
 	rowsAffected, _ := result.RowsAffected()
