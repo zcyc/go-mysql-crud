@@ -12,7 +12,7 @@ curl --location --request POST 'localhost/user' \
 }'
 ```
 
-### Update
+### Update By ID
 ```
 curl --location --request PUT 'localhost/user' \
 --header 'Content-Type: application/json' \
@@ -24,17 +24,17 @@ curl --location --request PUT 'localhost/user' \
 }'
 ```
 
-### Get List By Page And Size
+### List By Page And Size
 ```
 curl --location --request GET 'localhost/user/list/1/10'
 ```
 
-### Get By Id
+### Get By ID
 ```
 curl --location --request GET 'localhost/user/1'
 ```
 
-### Delete By Id
+### Delete By ID
 ```
 curl --location --request DELETE 'localhost/user/1'
 ```
