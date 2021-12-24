@@ -40,7 +40,7 @@ func TestUser(t *testing.T) {
 		service.GetUser(response, request)
 
 		got := response.Body.String()
-		want := `{"id":"1","name":"1","password":"1","status":1}`
+		want := `{"result":true,"msg":"success","code":200,"data":{"id":"1","name":"1","password":"1","status":1}}`
 
 		if got != want {
 			t.Errorf("got '%s' size '%d', want %s size %d", got, len(got), want, len(want))

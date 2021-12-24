@@ -3,6 +3,7 @@ package service
 import (
 	"database/sql"
 	"encoding/json"
+	"go-example/common/result"
 	"io"
 	"log"
 	"net/http"
@@ -105,7 +106,11 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	user, err := json.Marshal(model.User{ID: id, Name: name, Password: password, Status: status})
+
+	// 返回查询结果
+	user := model.User{ID: id, Name: name, Password: password, Status: status}
+	userRes := result.SuccessDate(user)
+	res, err := json.Marshal(userRes)
 	if err != nil {
 		log.Println("[GetUser][json.Marshal]", err)
 		_, err := io.WriteString(w, "Get user failed!")
@@ -115,16 +120,10 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	// 返回查询结果
-	if _, err := w.Write(user); err != nil {
+	if _, err := w.Write(res); err != nil {
 		log.Println("[GetUser][json.Marshal][w.Write]", err)
 		return
 	}
-	//json.NewEncoder(w) 会多一个空行，所以换用 w.Write
-	//if err := json.NewEncoder(w).Encode(model.User{ID: id, Name: name, Password: password, Status: status}); err != nil {
-	//	log.Println("[GetUser][Encode(User)]", err)
-	//	return
-	//}
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
