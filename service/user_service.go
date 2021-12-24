@@ -164,7 +164,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		log.Printf("[UpdateUser] ID:{%s} Name:{%s} Password:{%s} 最少有一个是空的", user.ID, user.Name, user.Password)
 		res, _ := json.Marshal(result.FailedMsg(result.ERROR_USER, "ID/Name/Password is empty!"))
 		if _, err := w.Write(res); err != nil {
-			log.Printf("[UpdateUser][json.Marshal] ID:{%s} Name:{%s} Password:{%s} 最少有一个是空的", user.ID, user.Name, user.Password)
+			log.Printf("[UpdateUser][json.Marshal][nil][w.Write]异常")
 			return
 		}
 		return
