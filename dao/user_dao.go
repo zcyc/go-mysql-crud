@@ -7,12 +7,12 @@ import (
 	"go-example/model"
 )
 
-func GetUserList() (*sql.Rows, error) {
-	return db.DB.Query(`SELECT id, name, password, status FROM users`)
+func GetUserList(page int, size int) (*sql.Rows, error) {
+	return db.DB.Query(`SELECT id, name, password, status FROM users LIMIT ? OFFSET ?`, size, (page-1)*size)
 }
 
 func GetUser(id *string, name *string, password *string, status *int) error {
-	query := "SELECT id, name, password, status FROM users WHERE id = ?"
+	query := `SELECT id, name, password, status FROM users WHERE id = ?`
 	err := db.DB.QueryRow(query, id).Scan(id, name, password, status)
 	return err
 }

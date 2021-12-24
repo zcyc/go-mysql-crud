@@ -6,6 +6,7 @@ import (
 	"go-example/common/result"
 	"log"
 	"net/http"
+	"strconv"
 
 	"go-example/dao"
 	"go-example/model"
@@ -13,11 +14,27 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// GetUserList 获取所有用户
 func GetUserList(w http.ResponseWriter, r *http.Request) {
 	var (
 		users []model.User
+		page  = 1
+		size  = 10
+		err   error
 	)
-	getUserListRes, err := dao.GetUserList()
+	// 获取路由参数
+	vars := mux.Vars(r)
+	page, err = strconv.Atoi(vars["page"])
+	if err != nil {
+		log.Println("[GetUserList] page 参数错误", err)
+	}
+	size, err = strconv.Atoi(vars["size"])
+	if err != nil {
+		log.Println("[GetUserList] size 参数错误", err)
+	}
+	log.Printf("[GetUserList] page:%d,size:%d", page, size)
+
+	getUserListRes, err := dao.GetUserList(page, size)
 	if err != nil {
 		log.Println("[GetUserList] 数据库执行错误", err)
 		res, _ := json.Marshal(result.FailedMsg(result.ERROR_USER, "Get user list failed!"))
@@ -65,6 +82,7 @@ func GetUserList(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// GetUser 用 id 获取用户
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	// 获取路由参数
 	vars := mux.Vars(r)
@@ -115,6 +133,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// CreateUser 新建用户
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user model.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
@@ -149,6 +168,85 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	res, _ := json.Marshal(result.SuccessMsg("Create user success!"))
 	if _, err := w.Write(res); err != nil {
 		log.Println("[CreateUser] 创建用户成功，返回错误", err)
+		return
+	}
+}
+
+// UpdateIfExist 更新用户
+func UpdateIfExist(w http.ResponseWriter, r *http.Request) {
+	var user model.User
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		log.Println("[UpdateUser] 参数转码错误", err)
+		return
+	}
+	log.Println("[UpdateUser] 参数", user)
+	if user.ID == "" || user.Name == "" || user.Password == "" {
+		log.Printf("[UpdateUser] ID:{%s} Name:{%s} Password:{%s} 最少有一个是空的", user.ID, user.Name, user.Password)
+		res, _ := json.Marshal(result.FailedMsg(result.ERROR_USER, "ID/Name/Password is empty!"))
+		if _, err := w.Write(res); err != nil {
+			log.Printf("[UpdateUser] 参数错误，返回错误")
+			return
+		}
+		return
+	}
+
+	updateUserRes, err := dao.UpdateUser(user)
+	if err != nil {
+		log.Println("[UpdateUser] 数据库执行失败", err)
+		res, _ := json.Marshal(result.FailedMsg(result.ERROR_USER, user.Name+" update failed"))
+		if _, err := w.Write(res); err != nil {
+			log.Println("[UpdateUser] 数据库执行失败，返回错误", err)
+			return
+		}
+		return
+	}
+
+	// 修改函数是只负责修改，数据是不是存在应该由业务代码去判断。
+	rowsAffected, _ := updateUserRes.RowsAffected()
+	if rowsAffected != 1 {
+		log.Println("[UpdateUser] 数据库执行成功，但是没有数据被修改", rowsAffected)
+	}
+
+	// 修改成功的返回值
+	res, _ := json.Marshal(result.SuccessMsg("Update user success!"))
+	if _, err := w.Write(res); err != nil {
+		log.Println("[UpdateUser] 数据修改成功，返回错误", err)
+		return
+	}
+}
+
+// DeleteUser 删除用户
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	// 获取路由参数
+	vars := mux.Vars(r)
+	var id = vars["id"]
+	if id == "" {
+		log.Println("[DeleteUser] 参数错误")
+		res, _ := json.Marshal(result.FailedMsg(result.ERROR_USER, "Delete failed,id is nil!"))
+		if _, err := w.Write(res); err != nil {
+			log.Println("[DeleteUser] 参数错误，返回错误", err)
+			return
+		}
+		return
+	}
+	log.Println("[DeleteUser][id]", id)
+	deleteUserRes, err := dao.DeleteUser(id)
+	if err != nil {
+		log.Println("[DeleteUser] 数据库执行错误", err)
+		res, _ := json.Marshal(result.FailedMsg(result.ERROR_USER, "Delete failed!"))
+		if _, err := w.Write(res); err != nil {
+			log.Println("[DeleteUser] 数据库执行错误，返回错误", err)
+			return
+		}
+		return
+	}
+	rowsAffected, _ := deleteUserRes.RowsAffected()
+	if rowsAffected != 1 {
+		log.Println("[DeleteUser] 数据库执行成功，但是没有数据被修改", rowsAffected)
+	}
+	res, _ := json.Marshal(result.SuccessMsg("Delete user success!"))
+	if _, err := w.Write(res); err != nil {
+		log.Println("[DeleteUser] 数据删除成功，返回错误", err)
 		return
 	}
 }
@@ -191,41 +289,6 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	res, _ := json.Marshal(result.SuccessMsg("Update user success!"))
 	if _, err := w.Write(res); err != nil {
 		log.Println("[UpdateUser] 数据修改成功，返回错误", err)
-		return
-	}
-}
-
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
-	// 获取路由参数
-	vars := mux.Vars(r)
-	var id = vars["id"]
-	if id == "" {
-		log.Println("[DeleteUser] 参数错误")
-		res, _ := json.Marshal(result.FailedMsg(result.ERROR_USER, "Delete failed,id is nil!"))
-		if _, err := w.Write(res); err != nil {
-			log.Println("[DeleteUser] 参数错误，返回错误", err)
-			return
-		}
-		return
-	}
-	log.Println("[DeleteUser][id]", id)
-	deleteUserRes, err := dao.DeleteUser(id)
-	if err != nil {
-		log.Println("[DeleteUser] 数据库执行错误", err)
-		res, _ := json.Marshal(result.FailedMsg(result.ERROR_USER, "Delete failed!"))
-		if _, err := w.Write(res); err != nil {
-			log.Println("[DeleteUser] 数据库执行错误，返回错误", err)
-			return
-		}
-		return
-	}
-	rowsAffected, _ := deleteUserRes.RowsAffected()
-	if rowsAffected != 1 {
-		log.Println("[DeleteUser] 数据库执行成功，但是没有数据被修改", rowsAffected)
-	}
-	res, _ := json.Marshal(result.SuccessMsg("Delete user success!"))
-	if _, err := w.Write(res); err != nil {
-		log.Println("[DeleteUser] 数据删除成功，返回错误", err)
 		return
 	}
 }

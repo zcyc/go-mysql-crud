@@ -7,7 +7,7 @@ import (
 )
 
 func AddUserHandler(r *mux.Router) {
-	r.HandleFunc("/user/list", service.GetUserList).Methods("GET")
+	r.HandleFunc("/user/list/{page}/{size}", service.GetUserList).Methods("GET")
 	r.HandleFunc("/user/{id}", service.GetUser).Methods("GET")
 	r.HandleFunc("/user", service.CreateUser).Methods("POST")
 	r.HandleFunc("/user", service.UpdateUser).Methods("PUT")
