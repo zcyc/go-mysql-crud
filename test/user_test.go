@@ -80,4 +80,64 @@ func TestUser(t *testing.T) {
 			t.Errorf("got '%s', want %s", got, want)
 		}
 	})
+
+	t.Run("CreateUserByNilName", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodPost, "/user", nil)
+		request.Body = ioutil.NopCloser(bytes.NewBufferString(`{"id":"1","password":"1","status":1}`))
+		response := httptest.NewRecorder()
+
+		service.CreateUser(response, request)
+
+		got := response.Body.String()
+		want := `Name/Password is empty!`
+
+		if got != want {
+			t.Errorf("got '%s', want %s", got, want)
+		}
+	})
+
+	t.Run("GetUserByNilId", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodGet, "/user", nil)
+
+		response := httptest.NewRecorder()
+
+		service.GetUser(response, request)
+
+		got := response.Body.String()
+		want := `Get failed,id is nil!`
+
+		if got != want {
+			t.Errorf("got '%s', want %s", got, want)
+		}
+	})
+
+	t.Run("UpdateUserByNilId", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodGet, "/user", nil)
+		request.Body = ioutil.NopCloser(bytes.NewBufferString(`{"name":"1","password":"1","status":2}`))
+		response := httptest.NewRecorder()
+
+		service.UpdateUser(response, request)
+
+		got := response.Body.String()
+		want := `ID/Name/Password is empty!`
+
+		if got != want {
+			t.Errorf("got '%s', want %s", got, want)
+		}
+	})
+
+	t.Run("DeleteUserByNilId", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodDelete, "/user", nil)
+
+		response := httptest.NewRecorder()
+
+		service.DeleteUser(response, request)
+
+		got := response.Body.String()
+		want := `Delete failed,id is nil!`
+
+		if got != want {
+			t.Errorf("got '%s', want %s", got, want)
+		}
+	})
 }

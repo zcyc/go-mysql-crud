@@ -81,8 +81,15 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	// 获取路由参数
 	vars := mux.Vars(r)
 	var id = vars["id"]
+	if id == "" {
+		log.Println("[GetUser][id] nil")
+		if _, err := io.WriteString(w, "Get failed,id is nil!"); err != nil {
+			log.Println("[GetUser][dao.GetUser][w.Write]", err)
+			return
+		}
+		return
+	}
 	log.Println("[GetUser][id]", id)
-
 	// 接收查询结果
 	var (
 		name     string
@@ -129,7 +136,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	log.Println("[CreateUser][Request]", user)
 	if user.Name == "" || user.Password == "" {
 		log.Printf("[CreateUser] Name:{%s} Password:{%s} 最少有一个是空的", user.Name, user.Password)
-		if _, err := io.WriteString(w, "Name/Password is empty"); err != nil {
+		if _, err := io.WriteString(w, "Name/Password is empty!"); err != nil {
 			log.Printf("[CreateUser][io.WriteString] Name:{%s} Password:{%s} 最少有一个是空的", user.Name, user.Password)
 			return
 		}
@@ -165,7 +172,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	log.Println("[UpdateUser][Request]", user)
 	if user.ID == "" || user.Name == "" || user.Password == "" {
 		log.Printf("[UpdateUser] ID:{%s} Name:{%s} Password:{%s} 最少有一个是空的", user.ID, user.Name, user.Password)
-		if _, err := io.WriteString(w, "ID/Name/Password is empty"); err != nil {
+		if _, err := io.WriteString(w, "ID/Name/Password is empty!"); err != nil {
 			log.Printf("[UpdateUser][io.WriteString] ID:{%s} Name:{%s} Password:{%s} 最少有一个是空的", user.ID, user.Name, user.Password)
 			return
 		}
@@ -197,6 +204,14 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	// 获取路由参数
 	vars := mux.Vars(r)
 	var id = vars["id"]
+	if id == "" {
+		log.Println("[DeleteUser][id] nil")
+		if _, err := io.WriteString(w, "Delete failed,id is nil!"); err != nil {
+			log.Println("[DeleteUser][dao.DeleteUser][w.Write]", err)
+			return
+		}
+		return
+	}
 	log.Println("[DeleteUser][id]", id)
 	result, err := dao.DeleteUser(id)
 	if err != nil {
