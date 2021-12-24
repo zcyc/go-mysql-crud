@@ -14,7 +14,7 @@ import (
 
 func TestUser(t *testing.T) {
 	t.Run("CreateUser", func(t *testing.T) {
-		request, _ := http.NewRequest(http.MethodGet, "/user", nil)
+		request, _ := http.NewRequest(http.MethodPost, "/user", nil)
 		request.Body = ioutil.NopCloser(bytes.NewBufferString(`{"id":"1","name":"1","password":"1","status":1}`))
 		response := httptest.NewRecorder()
 
@@ -48,7 +48,7 @@ func TestUser(t *testing.T) {
 	})
 
 	t.Run("UpdateUser", func(t *testing.T) {
-		request, _ := http.NewRequest(http.MethodGet, "/user", nil)
+		request, _ := http.NewRequest(http.MethodPut, "/user", nil)
 		request.Body = ioutil.NopCloser(bytes.NewBufferString(`{"id":"1","name":"1","password":"1","status":2}`))
 		response := httptest.NewRecorder()
 
@@ -66,7 +66,7 @@ func TestUser(t *testing.T) {
 		vars := map[string]string{
 			"id": "1",
 		}
-		request, _ := http.NewRequest(http.MethodGet, "/user", nil)
+		request, _ := http.NewRequest(http.MethodDelete, "/user", nil)
 		request = mux.SetURLVars(request, vars)
 
 		response := httptest.NewRecorder()
