@@ -16,5 +16,5 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("[DB][init] success")
+	log.Println("[DB] 初始化成功")
 }
