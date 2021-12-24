@@ -18,18 +18,20 @@ import (
 func GetUserList(w http.ResponseWriter, r *http.Request) {
 	var (
 		users []model.User
-		page  = 1
-		size  = 10
+		page  int
+		size  int
 		err   error
 	)
 	// 获取路由参数
 	vars := mux.Vars(r)
 	page, err = strconv.Atoi(vars["page"])
 	if err != nil {
+		page = 1
 		log.Println("[GetUserList] page 参数错误", err)
 	}
 	size, err = strconv.Atoi(vars["size"])
 	if err != nil {
+		size = 10
 		log.Println("[GetUserList] size 参数错误", err)
 	}
 	log.Printf("[GetUserList] page:%d,size:%d", page, size)
@@ -87,6 +89,18 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	// 获取路由参数
 	vars := mux.Vars(r)
 	var id = vars["id"]
+
+	/*
+		由于分页的 url 规则是 user/list/{page}/{size}
+		而获取单个 url 规则是 user/{id}
+		导致不传分页参数时候会把 list 当作 id 走到当前函数，所以这里做个处理，把请求转回去
+		还有另一种处理方式就是直接改路由，把 user/{id} 改成 user/get/{id}
+	*/
+	if id == "list" {
+		GetUserList(w, r)
+		return
+	}
+
 	if id == "" {
 		log.Println("[GetUser] 参数错误")
 		res, _ := json.Marshal(result.FailedMsg(result.ERROR_USER, "Get failed,id is nil!"))
