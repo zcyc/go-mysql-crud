@@ -61,11 +61,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println("[Login] 登陆成功，即将跳转")
+
 	// 登陆成功
 	var u model.User
 	err = user.Scan(&u.ID, &u.Name, &u.Password, &u.Status)
 	if err != nil {
-		log.Println("[Login] 登陆成功，提取生成参数报错")
+		log.Println("[Login] 登陆成功，提取页面生成参数报错")
 		return
 	}
 	sess := session.GetSession(w, r)
@@ -109,7 +110,12 @@ func Userinfo(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("id")
 	name := r.FormValue("name")
 	password := r.FormValue("password")
-	status, _ := strconv.Atoi(r.FormValue("status"))
+	status, err := strconv.Atoi(r.FormValue("status"))
+	if err != nil {
+		log.Println("[UserInfo] status 转换错误", err)
+		status = 1
+		return
+	}
 	log.Printf("[Userinfo][Update] id:%s,name:%s,password:%s,status:%d", id, name, password, status)
 	if isEmpty(id, name, password) {
 		Message(w, r, "字段不能为空")
@@ -117,7 +123,7 @@ func Userinfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userUpdate := model.User{ID: id, Name: name, Password: password, Status: status}
-	_, err := dao.UpdateUser(userUpdate)
+	_, err = dao.UpdateUser(userUpdate)
 	if err != nil {
 		return
 	}
@@ -142,7 +148,12 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("name")
 	password := r.FormValue("password")
 	password2 := r.FormValue("password2")
-	status, _ := strconv.Atoi(r.FormValue("status"))
+	status, err := strconv.Atoi(r.FormValue("status"))
+	if err != nil {
+		log.Println("[UserInfo] status 转换错误", err)
+		status = 1
+		return
+	}
 
 	if isEmpty(name, password, password2) {
 		Message(w, r, "字段不能为空")
@@ -159,7 +170,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		Password: password,
 		Status:   status,
 	}
-	_, err := dao.CreateUser(user)
+	_, err = dao.CreateUser(user)
 	if err != nil {
 		return
 	}
