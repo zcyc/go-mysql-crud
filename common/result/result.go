@@ -16,3 +16,23 @@ func SuccessDate(data interface{}) ResponseResult {
 		Data:   data,
 	}
 }
+
+// 失败响应,带失败Msg，无Data
+func FailedMsg(Code int, Msg string) ResponseResult {
+	return ResponseResult{
+		Result: false,
+		Msg:    Msg,
+		Code:   Code,
+		Data:   nil,
+	}
+}
+
+// 成功响应,带失败Msg，无Data
+func SuccessMsg(Msg string) ResponseResult {
+	return ResponseResult{
+		Result: true,
+		Msg:    Msg,
+		Code:   SUCCESS,
+		Data:   nil,
+	}
+}

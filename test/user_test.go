@@ -21,7 +21,7 @@ func TestUser(t *testing.T) {
 		service.CreateUser(response, request)
 
 		got := response.Body.String()
-		want := `Create user success!`
+		want := `{"result":true,"msg":"Create user success!","code":200,"data":null}`
 
 		if got != want {
 			t.Errorf("got '%s', want %s", got, want)
@@ -55,7 +55,7 @@ func TestUser(t *testing.T) {
 		service.UpdateUser(response, request)
 
 		got := response.Body.String()
-		want := `Update user success!`
+		want := `{"result":true,"msg":"Update user success!","code":200,"data":null}`
 
 		if got != want {
 			t.Errorf("got '%s', want %s", got, want)
@@ -74,7 +74,7 @@ func TestUser(t *testing.T) {
 		service.DeleteUser(response, request)
 
 		got := response.Body.String()
-		want := `Delete user success!`
+		want := `{"result":true,"msg":"Delete user success!","code":200,"data":null}`
 
 		if got != want {
 			t.Errorf("got '%s', want %s", got, want)
@@ -89,7 +89,7 @@ func TestUser(t *testing.T) {
 		service.CreateUser(response, request)
 
 		got := response.Body.String()
-		want := `Name/Password is empty!`
+		want := `{"result":false,"msg":"Name/Password is empty!","code":2001,"data":null}`
 
 		if got != want {
 			t.Errorf("got '%s', want %s", got, want)
@@ -104,7 +104,7 @@ func TestUser(t *testing.T) {
 		service.GetUser(response, request)
 
 		got := response.Body.String()
-		want := `Get failed,id is nil!`
+		want := `{"result":false,"msg":"Get failed,id is nil!","code":2001,"data":null}`
 
 		if got != want {
 			t.Errorf("got '%s', want %s", got, want)
@@ -119,7 +119,7 @@ func TestUser(t *testing.T) {
 		service.UpdateUser(response, request)
 
 		got := response.Body.String()
-		want := `ID/Name/Password is empty!`
+		want := `{"result":false,"msg":"ID/Name/Password is empty!","code":2001,"data":null}`
 
 		if got != want {
 			t.Errorf("got '%s', want %s", got, want)
@@ -134,7 +134,7 @@ func TestUser(t *testing.T) {
 		service.DeleteUser(response, request)
 
 		got := response.Body.String()
-		want := `Delete failed,id is nil!`
+		want := `{"result":false,"msg":"Delete failed,id is nil!","code":2001,"data":null}`
 
 		if got != want {
 			t.Errorf("got '%s', want %s", got, want)
