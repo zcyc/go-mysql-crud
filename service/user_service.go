@@ -152,6 +152,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var user model.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
@@ -193,6 +194,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	// 获取路由参数
 	vars := mux.Vars(r)
