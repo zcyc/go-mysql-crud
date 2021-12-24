@@ -3,15 +3,13 @@ package service
 import (
 	"database/sql"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"go-example/common/result"
+	"go-example/dao"
+	"go-example/model"
 	"log"
 	"net/http"
 	"strconv"
-
-	"go-example/dao"
-	"go-example/model"
-
-	"github.com/gorilla/mux"
 )
 
 // GetUserList 获取所有用户

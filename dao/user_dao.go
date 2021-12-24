@@ -32,3 +32,7 @@ func UpdateUser(user model.User) (sql.Result, error) {
 func DeleteUser(id string) (sql.Result, error) {
 	return db.DB.Exec(`DELETE FROM users WHERE id = ?`, id)
 }
+
+func GetUserByNameAndPassword(name string, password string) (*sql.Rows, error) {
+	return db.DB.Query(`SELECT id, name, password, status FROM users WHERE name = ? AND password = ?`, name, password)
+}

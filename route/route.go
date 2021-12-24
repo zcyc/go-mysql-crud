@@ -6,4 +6,5 @@ import (
 
 func AddHandler(r *mux.Router) {
 	AddUserHandler(r)
+	AddPageHandler(r)
 }
