@@ -15,10 +15,10 @@ import (
 
 func GetUserList(w http.ResponseWriter, r *http.Request) {
 	var (
-		rows  sql.Rows
 		users []model.User
 	)
-	if err := dao.GetUserList(&rows); err != nil {
+	getUserListRes, err := dao.GetUserList()
+	if err != nil {
 		log.Println("[GetUserList][dao.GetUserList]", err)
 		res, _ := json.Marshal(result.FailedMsg(result.ERROR_USER, "Get user list failed!"))
 		_, err := w.Write(res)
@@ -28,21 +28,23 @@ func GetUserList(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
 	defer func(rows *sql.Rows) {
 		err := rows.Close()
 		if err != nil {
 			log.Println(err)
 		}
-	}(&rows)
-	for rows.Next() {
+	}(getUserListRes)
+
+	for getUserListRes.Next() {
 		var u model.User
-		err := rows.Scan(&u.ID, &u.Name, &u.Password, &u.Status)
+		err := getUserListRes.Scan(&u.ID, &u.Name, &u.Password, &u.Status)
 		if err != nil {
 			log.Println(err)
 		}
 		users = append(users, u)
 	}
-	if err := rows.Err(); err != nil {
+	if err := getUserListRes.Err(); err != nil {
 		log.Println(err)
 	}
 

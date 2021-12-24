@@ -2,15 +2,15 @@ package dao
 
 import (
 	"database/sql"
+	"log"
 
 	"go-example/common/db"
 	"go-example/model"
 )
 
-func GetUserList(rows *sql.Rows) error {
-	var err error
-	rows, err = db.DB.Query(`SELECT id, name, password, status FROM users`)
-	return err
+func GetUserList() (*sql.Rows, error) {
+	log.Println("GetUserList11111111")
+	return db.DB.Query(`SELECT id, name, password, status FROM users`)
 }
 
 func GetUser(id *string, name *string, password *string, status *int) error {
