@@ -1,8 +1,9 @@
 package route
 
 import (
-	"github.com/gorilla/mux"
 	"go-example/service"
+
+	"github.com/gorilla/mux"
 )
 
 func AddUserHandler(r *mux.Router) {

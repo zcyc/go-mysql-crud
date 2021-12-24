@@ -3,12 +3,14 @@ package service
 import (
 	"database/sql"
 	"encoding/json"
-	"github.com/gorilla/mux"
-	"go-example/dao"
-	"go-example/model"
 	"io"
 	"log"
 	"net/http"
+
+	"go-example/dao"
+	"go-example/model"
+
+	"github.com/gorilla/mux"
 )
 
 // TODO: 需要一个统一返回结果的接口

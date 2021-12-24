@@ -2,6 +2,7 @@ package dao
 
 import (
 	"database/sql"
+
 	"go-example/common/db"
 	"go-example/model"
 )

@@ -2,12 +2,14 @@ package test
 
 import (
 	"bytes"
-	"github.com/gorilla/mux"
-	"go-example/service"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"go-example/service"
+
+	"github.com/gorilla/mux"
 )
 
 func TestUser(t *testing.T) {

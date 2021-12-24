@@ -1,9 +1,10 @@
 package main
 
 import (
-	"go-example/route"
 	"log"
 	"net/http"
+
+	"go-example/route"
 
 	"github.com/gorilla/mux"
 )
