@@ -42,6 +42,8 @@ func Logger(inner http.Handler, name string) http.Handler {
 
 如果一个返回值需要 Close 才会释放资源，直接忽略就会导致资源泄漏。
 
+更多可看：https://www.yuque.com/charlesjohn/blog/txyx8g
+
 ## 是否有 SQL 注入风险
 
 正常情况下没有，使用占位符并传入参数会自动屏蔽危险语句。
