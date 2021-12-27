@@ -56,7 +56,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Message(w, r, "登录失败！")
 		return
 	}
-	if user.Next() == false {
+	if !user.Next() {
 		Message(w, r, "登录失败！")
 		return
 	}
@@ -113,7 +113,6 @@ func Userinfo(w http.ResponseWriter, r *http.Request) {
 	status, err := strconv.Atoi(r.FormValue("status"))
 	if err != nil {
 		log.Println("[UserInfo] status 转换错误", err)
-		status = 1
 		return
 	}
 	log.Printf("[Userinfo][Update] id:%s,name:%s,password:%s,status:%d", id, name, password, status)
@@ -151,7 +150,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	status, err := strconv.Atoi(r.FormValue("status"))
 	if err != nil {
 		log.Println("[UserInfo] status 转换错误", err)
-		status = 1
 		return
 	}
 
